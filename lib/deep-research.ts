@@ -98,11 +98,6 @@ export function generateSearchQueries({
       .describe(`List of SERP queries, max of ${numQueries}`),
   })
   const jsonSchema = JSON.stringify(zodToJsonSchema(schema))
-  let lp = languagePrompt(language)
-
-  if (searchLanguage !== language) {
-    lp += `Use ${searchLanguage} for the SERP queries.`
-  }
   const prompt = [
     `Given the following prompt from the user, generate a list of SERP queries to research the topic. Return a maximum of ${numQueries} queries, but feel free to return less if the original prompt is clear. Make sure each query is unique and not similar to each other: <prompt>${query}</prompt>\n\n`,
     learnings
@@ -110,8 +105,7 @@ export function generateSearchQueries({
           '\n',
         )}`
       : '',
-    `You MUST respond in JSON with the following schema: ${jsonSchema}`,
-    lp,
+    `You MUST respond in JSON with the following schema: ${jsonSchema}`
   ].join('\n\n')
   return streamText({
     model: useAiModel(),
@@ -160,8 +154,7 @@ function processSearchResult({
     `<contents>${contents
       .map((content) => `<content>\n${content}\n</content>`)
       .join('\n')}</contents>`,
-    `You MUST respond in JSON with the following schema: ${jsonSchema}`,
-    languagePrompt(language),
+    `You MUST respond in JSON with the following schema: ${jsonSchema}`
   ].join('\n\n')
 
   return streamText({
